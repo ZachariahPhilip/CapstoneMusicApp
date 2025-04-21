@@ -10,9 +10,14 @@ import torch.optim as optim
 app = Flask(__name__)
 
 #  MongoDB Connection
-client = MongoClient("mongodb://localhost:27017/")
-db = client["music_recommendation"]  # Database name
-collection = db["spotify_tracks"]  # Collection name
+import os
+from pymongo import MongoClient
+
+mongodb_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
+client = MongoClient(mongodb_uri)
+db = client["music_recommendation"]
+collection = db["spotify_tracks"]
+
 
 #  Load data into a Pandas DataFrame from MongoDB
 df = pd.DataFrame(list(collection.find()))
