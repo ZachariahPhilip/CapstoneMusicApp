@@ -6,17 +6,24 @@ from sklearn.preprocessing import LabelEncoder
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import os
+import certifi
 
 app = Flask(__name__)
 
-#  MongoDB Connection
-import os
-from pymongo import MongoClient
-
-mongodb_uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017/")
-client = MongoClient(mongodb_uri)
+#  MongoDB Connection (Atlas in prod, localhost fallback)
+mongodb_uri = os.getenv(
+    "MONGODB_URI",
+    "mongodb://localhost:27017/"
+)
+client = MongoClient(
+    mongodb_uri,
+    tls=True,                    # force TLS
+    tlsCAFile=certifi.where()    # use certifi's CA bundle
+)
 db = client["music_recommendation"]
 collection = db["spotify_tracks"]
+
 
 
 #  Load data into a Pandas DataFrame from MongoDB
